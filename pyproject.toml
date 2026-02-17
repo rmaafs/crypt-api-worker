@@ -8,5 +8,20 @@ dependencies = []
 [dependency-groups]
 dev = [
   "workers-py",
-  "workers-runtime-sdk"
+  "workers-runtime-sdk",
+  "pytest",
+  "pytest-cov",
+  "pytest-asyncio"
 ]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
