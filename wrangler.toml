@@ -1,0 +1,11 @@
+name = "crypt-api-worker"
+main = "src/entry.py"
+compatibility_date = "2026-02-16"
+compatibility_flags = ["python_workers"]
+
+[vars]
+RATE_LIMIT_PER_SECOND = "3"
+
+[[kv_namespaces]]
+binding = "MESSAGES"
+id = "<TBD>"  # Replace with your KV namespace ID after creating it in Cloudflare dashboard
