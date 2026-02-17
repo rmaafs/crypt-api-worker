@@ -22,7 +22,7 @@ async def handle_create_message(request, env):
 
     # Generate ID and save message directly
     msg_id = generate_id()
-    
+
     try:
         await env.MESSAGES.put(msg_id, message, expiration_ttl=KV_TTL_SECONDS)
     except Exception:
