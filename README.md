@@ -1,6 +1,6 @@
 # crypt-api-worker
 
-![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python&logoColor=white)
 ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 
 Temporary self-destructing message API built on Cloudflare Workers with Python. Messages are stored in Cloudflare KV and automatically destroyed after being read or after 24 hours — whichever comes first.

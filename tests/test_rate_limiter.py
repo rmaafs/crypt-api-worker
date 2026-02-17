@@ -57,17 +57,19 @@ def test_custom_rate_limit():
 
 
 def test_cleanup_removes_expired_ips():
-    """Expired IPs are cleaned up from internal state."""
-    rl = RateLimiter(max_requests_per_second=3)
+    """Expired IPs are cleaned up from internal state after cleanup threshold."""
     base = 1000000.0
 
+    # Mock time BEFORE initializing RateLimiter so _last_cleanup is set correctly
     with patch("src.rate_limiter.time.time", return_value=base):
+        rl = RateLimiter(max_requests_per_second=3)
         rl.is_allowed("10.0.0.1")
 
-    # 2 seconds later – the old entry should be cleaned
-    with patch("src.rate_limiter.time.time", return_value=base + 2.0):
+    # 11 seconds later – cleanup should be triggered (threshold is 10s)
+    with patch("src.rate_limiter.time.time", return_value=base + 11.0):
         rl.is_allowed("10.0.0.2")
 
+    # The old IP should be cleaned up since it's been > 10 seconds
     assert "10.0.0.1" not in rl._timestamps
 
 

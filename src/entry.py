@@ -11,13 +11,22 @@ class Default(WorkerEntrypoint):
     # Rate limiter is per-isolate instance (not per-request).
     # NOTE: In Cloudflare Workers, each isolate has its own RateLimiter,
     # so this is NOT globally consistent across all edge locations.
-    rate_limiter = RateLimiter()
+    rate_limiter = None
+
+    def __init__(self, env, ctx):
+        super().__init__(env, ctx)
+        # Initialize rate limiter once per isolate with env config
+        if Default.rate_limiter is None:
+            rate_limit = int(getattr(env, "RATE_LIMIT_PER_SECOND", 3))
+            Default.rate_limiter = RateLimiter(max_requests_per_second=rate_limit)
 
     async def fetch(self, request):
         try:
             return await self._handle_request(request)
-        except Exception:
-            # Global catch: never leak internal details
+        except Exception as e:
+            # Log exception for debugging (visible in Cloudflare dashboard logs)
+            print(f"Unhandled exception: {type(e).__name__}: {e}")
+            # Global catch: never leak internal details to client
             return error_response("Internal server error", 500)
 
     async def _handle_request(self, request):
@@ -29,14 +38,8 @@ class Default(WorkerEntrypoint):
             return self._preflight_response()
 
         # Rate limit check
-        client_ip = (
-            request.headers.get("CF-Connecting-IP")
-            or request.headers.get("X-Forwarded-For", "unknown").split(",")[0].strip()
-        )
-
-        # Configure rate limiter from env if available
-        rate_limit = int(getattr(self.env, "RATE_LIMIT_PER_SECOND", 3))
-        self.rate_limiter.max_requests_per_second = rate_limit
+        # CF-Connecting-IP is always set by Cloudflare's edge and cannot be spoofed
+        client_ip = request.headers.get("CF-Connecting-IP") or "unknown"
 
         if not self.rate_limiter.is_allowed(client_ip):
             return error_response("Rate limit exceeded", 429)

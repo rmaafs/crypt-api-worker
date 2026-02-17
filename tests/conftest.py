@@ -33,8 +33,9 @@ class MockResponse:
 class MockWorkerEntrypoint:
     """Minimal stand-in for workers.WorkerEntrypoint."""
 
-    def __init__(self, env=None):
+    def __init__(self, env=None, ctx=None):
         self.env = env
+        self.ctx = ctx
 
 
 _mock_workers.Response = MockResponse
@@ -130,14 +131,13 @@ def env(kv):
 @pytest.fixture(autouse=True)
 def _reset_rate_limiter():
     """Reset the class-level rate limiter between tests."""
-    Default.rate_limiter = RateLimiter()
+    Default.rate_limiter = None
     yield
 
 
 @pytest.fixture()
 def worker(env):
     """Return a Default worker instance wired to the given env."""
-    instance = Default.__new__(Default)
-    instance.env = env
-    instance.rate_limiter = Default.rate_limiter
+    # Call __init__ properly with env and ctx (ctx can be None for tests)
+    instance = Default(env, ctx=None)
     return instance

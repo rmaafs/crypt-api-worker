@@ -18,7 +18,13 @@ def generate_id(length=5):
 
 
 def validate_message_size(body, max_bytes=102400):
-    """Return True if body size is within limit, False if it exceeds 100KB."""
+    """Return True if the UTF-8-encoded body is at most `max_bytes` (default 102400 bytes).
+    
+    If `body` is a `str`, it is first encoded as UTF-8 and the resulting byte length is
+    compared against `max_bytes`. Note that messages containing multi-byte Unicode
+    characters may be rejected even if they contain fewer than `max_bytes` characters,
+    because the limit is enforced on the encoded byte size, not the character count.
+    """
     if isinstance(body, str):
         body = body.encode("utf-8")
     return len(body) <= max_bytes

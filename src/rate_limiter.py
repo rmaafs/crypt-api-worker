@@ -13,6 +13,7 @@ class RateLimiter:
     def __init__(self, max_requests_per_second=3):
         self.max_requests_per_second = max_requests_per_second
         self._timestamps: dict[str, list[float]] = {}
+        self._last_cleanup = time.time()
 
     def is_allowed(self, ip: str) -> bool:
         """Check if the IP is allowed to make a request using sliding window."""
@@ -32,8 +33,11 @@ class RateLimiter:
         timestamps.append(now)
         self._timestamps[ip] = timestamps
 
-        # Periodically clean expired entries to avoid memory leaks
-        self._cleanup(now)
+        # Periodically clean expired entries (every ~10 seconds on average)
+        # Using probabilistic cleanup to avoid overhead on every request
+        if now - self._last_cleanup > 10:
+            self._cleanup(now)
+            self._last_cleanup = now
 
         return True
 
