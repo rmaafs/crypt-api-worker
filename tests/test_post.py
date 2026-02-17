@@ -110,53 +110,6 @@ async def test_invalid_json_body_returns_400(worker):
     assert "Invalid JSON" in response.json_body()["error"]
 
 
-async def test_id_collision_regenerates(worker, kv, env):
-    """When KV already has a key, a new ID is generated."""
-    # Pre-populate many keys but leave room for success
-    call_count = 0
-    original_get = kv.get
-
-    async def mock_get(key):
-        nonlocal call_count
-        call_count += 1
-        if call_count < 3:
-            return "existing"
-        return None
-
-    kv.get = mock_get
-
-    request = MockRequest(
-        method="POST",
-        url="https://example.com/",
-        headers={"CF-Connecting-IP": "1.2.3.4"},
-        body={"message": "collision-test"},
-    )
-    response = await worker.fetch(request)
-
-    assert response.status == 200
-    assert call_count >= 3
-
-
-async def test_persistent_collision_returns_500(worker, kv):
-    """When all 10 ID attempts collide → 500."""
-
-    async def always_exists(key):
-        return "exists"
-
-    kv.get = always_exists
-
-    request = MockRequest(
-        method="POST",
-        url="https://example.com/",
-        headers={"CF-Connecting-IP": "1.2.3.4"},
-        body={"message": "will-fail"},
-    )
-    response = await worker.fetch(request)
-
-    assert response.status == 500
-    assert "unique ID" in response.json_body()["error"]
-
-
 async def test_message_exactly_100kb_accepted(worker, kv):
     """Message with exactly 100KB should be accepted (inclusive limit)."""
     exact_message = "x" * 102400

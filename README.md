@@ -45,34 +45,34 @@ The API runs as a [Cloudflare Worker](https://developers.cloudflare.com/workers/
 
 ### `POST /` — Create a temporary message
 
-| Field | Details |
-|-------|---------|
+| Field            | Details                           |
+| ---------------- | --------------------------------- |
 | **Request body** | `{"message": "your secret text"}` |
-| **Response** | `{"id": "abc12"}` |
-| **Content-Type** | `application/json` |
+| **Response**     | `{"id": "abc12"}`                 |
+| **Content-Type** | `application/json`                |
 
-| Status | Description |
-|--------|-------------|
-| `200`  | Message created successfully |
+| Status | Description                                   |
+| ------ | --------------------------------------------- |
+| `200`  | Message created successfully                  |
 | `400`  | Invalid JSON or missing/empty `message` field |
-| `413`  | Message exceeds 100 KB |
-| `429`  | Rate limit exceeded |
-| `500`  | Could not generate a unique ID |
+| `413`  | Message exceeds 100 KB                        |
+| `429`  | Rate limit exceeded                           |
+| `500`  | Could not generate a unique ID                |
 
 ### `GET /{id}` — Retrieve and destroy a message
 
 The message is **deleted immediately** after being read.
 
-| Field | Details |
-|-------|---------|
+| Field              | Details                                   |
+| ------------------ | ----------------------------------------- |
 | **Path parameter** | `id` — the 5-character message identifier |
-| **Response** | `{"message": "your secret text"}` |
+| **Response**       | `{"message": "your secret text"}`         |
 
-| Status | Description |
-|--------|-------------|
-| `200`  | Message returned (and destroyed) |
+| Status | Description                       |
+| ------ | --------------------------------- |
+| `200`  | Message returned (and destroyed)  |
 | `404`  | Message not found or already read |
-| `429`  | Rate limit exceeded |
+| `429`  | Rate limit exceeded               |
 
 ## Installation and Setup
 
@@ -133,7 +133,7 @@ curl -X POST https://your-worker.workers.dev/ \
 Response:
 
 ```json
-{"id": "abc12"}
+{ "id": "abc12" }
 ```
 
 ### Retrieve a message (self-destructs after reading)
@@ -145,13 +145,13 @@ curl https://your-worker.workers.dev/abc12
 Response:
 
 ```json
-{"message": "This is a secret message"}
+{ "message": "This is a secret message" }
 ```
 
 Requesting the same ID again returns:
 
 ```json
-{"error": "Message not found"}
+{ "error": "Message not found" }
 ```
 
 ## Tests
@@ -180,10 +180,10 @@ Automatic deployment on every push to `main` via GitHub Actions (`.github/workfl
 
 **Required GitHub Secrets:**
 
-| Secret | Description |
-|--------|-------------|
-| `CF_ACCOUNT_ID` | Cloudflare Account ID (found in dashboard) |
-| `CF_API_TOKEN` | Cloudflare API Token with Workers permissions |
+| Secret          | Description                                   |
+| --------------- | --------------------------------------------- |
+| `CF_ACCOUNT_ID` | Cloudflare Account ID (found in dashboard)    |
+| `CF_API_TOKEN`  | Cloudflare API Token with Workers permissions |
 
 ## Limitations
 

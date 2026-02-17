@@ -99,7 +99,7 @@ async def test_unhandled_exception_returns_500(worker):
     response = await worker.fetch(request)
 
     assert response.status == 500
-    assert "Internal server error" in response.json_body()["error"]
+    assert "Failed to save message" in response.json_body()["error"]
 
 
 async def test_rate_limited_returns_429(worker):

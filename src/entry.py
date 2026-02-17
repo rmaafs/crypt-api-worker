@@ -18,7 +18,8 @@ class Default(WorkerEntrypoint):
         # Initialize rate limiter once per isolate with env config
         if Default.rate_limiter is None:
             rate_limit = int(getattr(env, "RATE_LIMIT_PER_SECOND", 3))
-            Default.rate_limiter = RateLimiter(max_requests_per_second=rate_limit)
+            Default.rate_limiter = RateLimiter(
+                max_requests_per_second=rate_limit)
 
     async def fetch(self, request):
         try:

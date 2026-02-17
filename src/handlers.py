@@ -1,6 +1,5 @@
 from src.utils import error_response, generate_id, json_response, validate_message_size
 
-MAX_ID_ATTEMPTS = 10
 KV_TTL_SECONDS = 86400  # 24 hours
 
 
@@ -21,17 +20,13 @@ async def handle_create_message(request, env):
     if not validate_message_size(message):
         return error_response("Message exceeds maximum size of 100KB", 413)
 
-    # Generate unique ID with collision check (max 10 attempts)
-    for _ in range(MAX_ID_ATTEMPTS):
-        msg_id = generate_id()
-        existing = await env.MESSAGES.get(msg_id)
-        if existing is None:
-            break
-    else:
-        return error_response("Could not generate a unique ID. Please try again.", 500)
-
-    # Save message in KV with 24h TTL
-    await env.MESSAGES.put(msg_id, message, expiration_ttl=KV_TTL_SECONDS)
+    # Generate ID and save message directly
+    msg_id = generate_id()
+    
+    try:
+        await env.MESSAGES.put(msg_id, message, expiration_ttl=KV_TTL_SECONDS)
+    except Exception:
+        return error_response("Failed to save message. Please try again.", 500)
 
     return json_response({"id": msg_id})
 
