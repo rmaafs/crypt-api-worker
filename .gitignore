@@ -1,3 +1,30 @@
-.venv
-.DS_Store
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.eggs/
+dist/
+build/
+
+# Virtual env
+.venv/
+
+# Environment
 .env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node / Wrangler
+node_modules/
+.wrangler/
+
+# Coverage
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.swp
