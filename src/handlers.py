@@ -1,4 +1,4 @@
-from src.utils import error_response, generate_id, json_response, validate_message_size
+from utils import error_response, generate_id, json_response, validate_message_size
 
 KV_TTL_SECONDS = 86400  # 24 hours
 

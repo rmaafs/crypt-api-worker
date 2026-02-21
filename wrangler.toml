@@ -3,9 +3,14 @@ main = "src/entry.py"
 compatibility_date = "2026-02-16"
 compatibility_flags = ["python_workers"]
 
+routes = [
+  { pattern = "crypt-worker.rmaafs.com/*", zone_name = "rmaafs.com" }
+]
+workers_dev = false
+
 [vars]
 RATE_LIMIT_PER_SECOND = "3"
 
 [[kv_namespaces]]
 binding = "MESSAGES"
-id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"  # REQUIRED: Set this to your actual KV namespace ID from Cloudflare dashboard before deploying
+id = "efb3ccc7620f4b919921b25ff247c4f5"

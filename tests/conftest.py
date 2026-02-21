@@ -5,8 +5,13 @@ a mock version into sys.modules BEFORE any source code is imported.
 """
 
 import json
+import os
 import sys
 import types
+
+# Add src/ to sys.path so that intra-package imports (e.g. "from handlers import ...")
+# resolve correctly when running tests from the project root.
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 # ---------------------------------------------------------------------------
 # Mock `workers` module — must be set up before any src imports

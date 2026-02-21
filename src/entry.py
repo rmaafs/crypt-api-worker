@@ -2,9 +2,9 @@ from urllib.parse import urlparse
 
 from workers import Response, WorkerEntrypoint
 
-from src.handlers import handle_create_message, handle_get_message
-from src.rate_limiter import RateLimiter
-from src.utils import error_response, CORS_HEADERS
+from handlers import handle_create_message, handle_get_message
+from rate_limiter import RateLimiter
+from utils import error_response, CORS_HEADERS
 
 
 class Default(WorkerEntrypoint):
